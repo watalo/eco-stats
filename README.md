@@ -4,6 +4,10 @@ something about Professor Chen Qiang's 'Econometrics and Stata Application'
 关于陈强教授《计量经济学及Stata应用》的一些内容
 
 ---
+## 使用的软件
+
+- Obsidian
+- Vscode
 ## 有用的链接
 
 ### 计量经济学相关资源
@@ -17,8 +21,15 @@ something about Professor Chen Qiang's 'Econometrics and Stata Application'
 
 ## 文件结构
 
-- Econnometrics_CQ
-- Package_Docs
-- 
+### .Econnometrics_CQ/
 
+markdown格式的笔记、ipynb格式的python代码
+- 0_Tutorial
+- 1_Code
+### .Package_Docs/
 
+pandas、seaborn、statsmodels的官方文档笔记
+
+## 结构化的文字
+
+大多数的markdown的编辑器，可以对成段的内容进行很清晰的层次划分，便于快速阅读。
