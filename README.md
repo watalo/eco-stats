@@ -26,9 +26,12 @@ something about Professor Chen Qiang's 'Econometrics and Stata Application'
 markdown格式的笔记、ipynb格式的python代码
 - 0_Tutorial
 - 1_Code
+- 2_Data
 ### .Package_Docs/
 
-pandas、seaborn、statsmodels的官方文档笔记
+- pandas官方文档笔记
+- seaborn官方文档笔记
+- statsmodels官方文档笔记
 
 ## 结构化的文字
 
