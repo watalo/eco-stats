@@ -16,6 +16,7 @@ something about Professor Chen Qiang's 'Econometrics and Stata Application'
 ### python相关库
 - [seaborn文档](https://seaborn.pydata.org/)
 - [statsmodels文档](https://www.statsmodels.org/stable/index.html)
+	- [Statsmodels 中文文档 - 目录 - Heywhale.com](https://www.heywhale.com/mw/project/60960b0364d3a200172540c0/content)
 - [python3官方文档](https://docs.python.org/zh-cn/3/)
 - [Pandas官方文档](https://pandas.pydata.org/pandas-docs/stable/index.html)
 
