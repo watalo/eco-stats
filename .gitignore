@@ -164,3 +164,6 @@ cython_debug/
 
 #
 eco-stats.code-workspace
+
+#
+.test/
