@@ -1,6 +1,6 @@
 # eco-stats
 
-something about Professor Chen Qiang's 'Econometrics and Stata Application' 
+Something about Professor Chen Qiang's 'Econometrics and Stata Application' 
 关于陈强教授《计量经济学及Stata应用》的一些内容
 
 ---
@@ -23,13 +23,12 @@ something about Professor Chen Qiang's 'Econometrics and Stata Application'
 ## 文件结构
 
 ### .Econnometrics_CQ/
-
 markdown格式的笔记、ipynb格式的python代码
 - 0_Tutorial
 - 1_Code
 - 2_Data
 ### .Package_Docs/
-
+可能会用到的文档摘要
 - pandas官方文档笔记
 - seaborn官方文档笔记
 - statsmodels官方文档笔记
