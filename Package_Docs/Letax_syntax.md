@@ -343,7 +343,7 @@ $$
   (`\dot x` ): ![\dot x](https://math.jianshu.com/math?formula=%5Cdot%20x)  
   (`\ddot x` ): ![\ddot x](https://math.jianshu.com/math?formula=%5Cddot%20x)  
   (`\dot {\dot x}` ): ![\dot {\dot x}](https://math.jianshu.com/math?formula=%5Cdot%20%7B%5Cdot%20x%7D)
-
+波浪上标（`\tilde x`） $\tilde x$
 ## **表格**
 
   使用`\begin{array}{列样式}…\end{array}` 这样的形式来创建表格，列样式可以是`clr` 表示居中，左，右对齐，还可以使用`|` 表示一条竖线。表格中各行使用`\\` 分隔，各列使用`&` 分隔。使用`\hline` 在本行前加入一条直线。 例如:

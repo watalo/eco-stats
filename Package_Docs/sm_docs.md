@@ -89,27 +89,17 @@ sm.graphics.plot_partregress('Lottery', 'Wealth', ['Region', 'Literacy'], data=d
 ```
 
 ---
-
 ### 用户指南
 
 #### 背景
-
 - **内生变量和外生变量**：介绍了统计建模中的基本概念，如内生变量（endog）和外生变量（exog）。
-
 #### 导入路径和结构
-
 - 讨论了如何导入statsmodels库的不同模块和结构。
-
 #### 使用R风格的公式拟合模型
-
 - 解释了如何使用类似于R语言的公式语法来拟合统计模型。
-
 #### 陷阱
-
 - 提供了一些在使用statsmodels时可能遇到的问题和注意事项。
-
 #### 回归和线性模型
-
 - **线性回归**：介绍了线性回归模型的基本概念和使用方法。
 - **广义线性模型**：讨论了广义线性模型（GLMs）的特点和应用。
 - **广义估计方程**：介绍了使用广义估计方程（GEE）的模型。
@@ -119,16 +109,12 @@ sm.graphics.plot_partregress('Lottery', 'Wealth', ['Region', 'Literacy'], data=d
 - **离散因变量回归**：讨论了当因变量是离散的时候使用回归模型的方法。
 - **广义线性混合效应模型**：介绍了广义线性混合效应模型的理论和实现。
 - **方差分析（ANOVA）**：提供了方差分析的使用方法和解释。
-
 #### 其他模型
-
 - **时间序列分析**：介绍了时间序列分析的方法，包括`tsa`模块和状态空间方法。
 - **向量自回归**：讨论了`tsa.vector_ar`模块，用于向量自回归模型。
 - **生存和持续时间分析的方法**：介绍了非参数方法和广义矩估计（GMM）等用于生存和持续时间分析的技术。
 - **多变量统计**：讨论了多变量统计方法和工具。
-
 #### 统计和工具
-
 - **统计**：提供了统计测试和模型检验的工具。
 - **列联表**：介绍了列联表的分析方法。
 - **链式方程多重插补**：讨论了使用链式方程进行多重插补的技术。
@@ -136,10 +122,78 @@ sm.graphics.plot_partregress('Lottery', 'Wealth', ['Region', 'Literacy'], data=d
 - **经验似然**：讨论了经验似然方法的应用。
 - **图形**：提供了数据可视化的工具。
 - **输入输出**：介绍了数据的输入输出方法。
-
 #### 处理大数据集
-
 - **优化**：讨论了在处理大数据集时的优化技术。
 - **数据集**：介绍了`datasets`包，用于加载和使用标准数据集。
 - **沙盒**：提供了一个实验性功能和代码的测试区域。
+### OLS模型拟合结果的属性与方法
+```python
+results = sm.OLS(y,X).fit()
+```
+#### 方法
 
+| 方法                                                  | 描述                                             |
+| --------------------------------------------------- | ---------------------------------------------- |
+| `compare_f_test(restricted)`                        | 使用F检验来测试限制模型是否正确。                              |
+| `compare_lm_test(restricted[, demean, use_lr])`     | 使用拉格朗日乘数检验来测试一组线性限制。                           |
+| `compare_lr_test(restricted[, large_sample])`       | 进行似然比检验以判断限制模型是否正确。                            |
+| `conf_int([alpha, cols])`                           | 计算拟合参数的置信区间。                                   |
+| `conf_int_el(param_num[, sig, upper_bound, ...])`   | 使用经验似然方法计算置信区间。                                |
+| `cov_params([r_matrix, column, scale, cov_p, ...])` | 计算方差/协方差矩阵。                                    |
+| `el_test(b0_vals, param_nums[, ...])`               | 使用经验似然方法测试单个或联合假设。                             |
+| `f_test(r_matrix[, cov_p, invcov])`                 | 计算联合线性假设的F检验。                                  |
+| `get_influence()`                                   | 计算影响和异常值指标。                                    |
+| `get_prediction([exog, transform, weights, ...])`   | 计算预测结果。                                        |
+| `get_robustcov_results([cov_type, use_t])`          | 创建一个以稳健协方差为默认的新结果实例。                           |
+| `info_criteria(crit[, dk_params])`                  | 为模型返回一个信息准则。                                   |
+| `initialize(model, params, **kwargs)`               | 初始化（可能重新初始化）一个结果实例。                            |
+| `load(fname)`                                       | 加载一个pickled的结果实例。                              |
+| `normalized_cov_params()`                           | 查看特定模型类的文档字符串。                                 |
+| `outlier_test([method, alpha, labels, order, ...])` | 根据方法测试观测值是否为异常值。                               |
+| `predict([exog, transform])`                        | 使用`self.model.predict`与`self.params`作为第一个参数调用。 |
+| `remove_data()`                                     | 从结果和模型中移除数据数组和所有nobs数组。                        |
+| `save(fname[, remove_data])`                        | 保存这个实例的pickle。                                 |
+| `scale()`                                           | 作为协方差矩阵的尺度因子。                                  |
+| `summary([yname, xname, title, alpha, slim])`       | 总结回归结果。                                        |
+| `summary2([yname, xname, title, alpha, ...])`       | 实验性总结函数，用于总结回归结果。                              |
+| `t_test(r_matrix[, cov_p, use_t])`                  | 为形式为Rb = q的每个线性假设计算t检验。                        |
+| `t_test_pairwise(term_name[, method, alpha, ...])`  | 执行具有多重测试校正p值的成对t检验。                            |
+| `wald_test(r_matrix[, cov_p, invcov, use_f, ...])`  | 计算联合线性假设的Wald检验。                               |
+| `wald_test_terms([skip_single, ...])`               | 计算跨越多列项的一系列Wald检验。                             |
+
+#### 属性
+| 方法                 | 描述                                     |
+| ------------------ | -------------------------------------- |
+| `HC0_se`           | White's (1980) 异方差稳健标准误差。              |
+| `HC1_se`           | MacKinnon 和 White 的 (1985) 异方差稳健标准误差。  |
+| `HC2_se`           | MacKinnon 和 White 的 (1985) 异方差稳健标准误差。  |
+| `HC3_se`           | MacKinnon 和 White 的 (1985) 异方差稳健标准误差。  |
+| `aic`              | 赤池信息准则（Akaike's information criteria）。 |
+| `bic`              | 贝叶斯信息准则（Bayes' information criteria）。  |
+| `bse`              | 参数估计的标准误差。                             |
+| `centered_tss`     | 围绕均值的总（加权）平方和。                         |
+| `condition_number` | 返回外生矩阵的条件数。                            |
+| `cov_HC0`          | 异方差稳健协方差矩阵。                            |
+| `cov_HC1`          | 异方差稳健协方差矩阵。                            |
+| `cov_HC2`          | 异方差稳健协方差矩阵。                            |
+| `cov_HC3`          | 异方差稳健协方差矩阵。                            |
+| `eigenvals`        | 返回按降序排列的特征值。                           |
+| `ess`              | 解释的平方和。                                |
+| `f_pvalue`         | F统计量的p值。                               |
+| `fittedvalues`     | 原始（未漂白）设计的预测值。                         |
+| `fvalue`           | 完全指定模型的F统计量。                           |
+| `llf`              | 模型的对数似然。                               |
+| `mse_model`        | 模型的均方误差。                               |
+| `mse_resid`        | 残差的均方误差。                               |
+| `mse_total`        | 总均方误差。                                 |
+| `nobs`             | 观测数n。                                  |
+| `pvalues`          | 参数t统计量的双尾p值。                           |
+| `resid`            | 模型的残差。                                 |
+| `resid_pearson`    | 归一化以具有单位方差的残差。                         |
+| `rsquared`         | 模型的R平方。                                |
+| `rsquared_adj`     | 调整后的R平方。                               |
+| `ssr`              | （漂白的）残差平方和。                            |
+| `tvalues`          | 给定参数估计的t统计量。                           |
+| `uncentered_tss`   | 未中心化的平方和。                              |
+| `use_t`            | 标志，表示在推断中是否使用学生分布。                     |
+| `wresid`           | 转换/漂白的回归变量和回归因子的残差。                    |
