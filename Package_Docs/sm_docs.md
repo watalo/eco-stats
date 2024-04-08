@@ -197,3 +197,27 @@ results = sm.OLS(y,X).fit()
 | `uncentered_tss`   | 未中心化的平方和。                              |
 | `use_t`            | 标志，表示在推断中是否使用学生分布。                     |
 | `wresid`           | 转换/漂白的回归变量和回归因子的残差。                    |
+#### `t_test()`的用法
+计算 Rb = q 形式的每个线性假设的 t 检验。b代表回归参数。
+##### 参数
+**r_matrix**：{array_like, `str`，`tuple`}
+- 其中：
+	- array：如果给出一个数组R， $p \times k$ 的2维数组或长度 k 的1维数组用于明确线性限制。
+		- 这个线性组合Rb=0
+			- 例如，有3个回归系数，b=(b_1，b_2, b_3)，那么：
+			- 参数可以使用，`R = [0, 1, 0]`
+			- 等于$H_0:b_2=0$
+			- 相当于`r_matrix = (R, q=0)`
+	- str ：要测试的完整假设可以作为字符串给出。 请参阅示例。
+	- tuple ：形式为 （R， q） 的数组元组。如果给出 q， 可以是标量或长度 p 行向量。
+
+**cov_p**：array_like，可选参数
+- 参数协方差矩阵的替代估计值。 如果给出 None，则使用 self.normalized_cov_params。
+
+**use_t**：bool，可选参数
+- 如果use_t为None，则使用模型的默认值。
+- 如果use_t为True，则 p 值基于 t 分布。
+- 如果use_t为False，则 p 值基于正态值分配。
+##### 返回
+ContrastResults
+- 测试的结果是此结果实例的属性。 可用结果具有与参数表相同的元素在`summary()`中。
