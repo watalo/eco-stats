@@ -134,6 +134,11 @@
 - 由于内生变量的存在，使得OLS回归结果出现偏差，统称为<span style="color:#00b0f0">内生性偏差</span>，简称<span style="color:#00b0f0">内生性</span>。
 
 #定义 稳健标准误（robust standard errors）/ 异方差稳健的标准误（heteroskedasticity-consistent standard errors）$$\widehat{Avar(\hat\beta|X)}=n(X'X)^{-1}\widehat{Var(\epsilon|X)}X(X'X)^{-1}$$
+
+> 教材中使用的是White(1980)的公式，在statsmodel中，标记为`HC0`，
+> 而以White(1985)中使用的公式，在statsmodel中，记为`HC1`、`HC2`、`HC3`
+
+![[sm_docs#OLSResults.HC0_se | sm官方文档]]
 ## 6.9 大样本统计推断
 
 对于渐近独立的平稳过程，如果样本容量足够大，则OLS估计量的剪辑正态分布是对其真实分布的较好近似，那就可以使用其渐近分布进行大样本假设检验和区间估计。
@@ -148,7 +153,11 @@
 
 统计量W在大样本情况下，服从卡方分布。
 ## 6.10 大样本OLS的python命令及实例
+案例文献
+> [[6.10-Returns_to_Scale_in_Electricity_Supply.pdf]]
 
+案例python代码
+> [[Chapter_06.ipynb]]
 ## 6.11 大样本理论的蒙特卡罗模拟
 
 
