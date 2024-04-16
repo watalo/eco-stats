@@ -164,7 +164,7 @@ results = sm.OLS(y,X).fit()
 | `wald_test_terms([skip_single, ...])`               | 计算跨越多列项的一系列Wald检验。                             |
 
 #### 属性
-| 方法                 | 描述                                     |
+| 属性                 | 描述                                     |
 | ------------------ | -------------------------------------- |
 | `HC0_se`           | White's (1980) 异方差稳健标准误差。              |
 | `HC1_se`           | MacKinnon 和 White 的 (1985) 异方差稳健标准误差。  |
@@ -244,3 +244,45 @@ ContrastResults
 当调用` HC0_se `或 `cov_HC0` 方法时，`RegressionResults` 实例将会新增一个属性` het_scale`。在这个情况下，`het_scale` 仅仅是残差的平方（resid**2）。这个属性可以用来获取模型残差的平方，进而用于计算异方差稳健标准误。
 
 与此类似的还有`HC1`，`HC2`，`HC3`
+
+---
+## BP检验
+
+> statsmodels.stats.diagnostic.het_breuschpagan 
+### 概述
+`statsmodels.stats.diagnostic.het_breuschpagan`是用于检测异方差性的Breusch-Pagan Lagrange Multiplier检验。该检验的假设是残差方差不依赖于解释变量x。
+
+异方差性意味着残差方差是恒定的。如果存在异方差性，那么在小样本或中等大小的样本中，该检验可能会夸大结果的显著性。在这种情况下，F统计量更为可取。
+### 参数
+- `resid`: array_like
+  - 对于Breusch-Pagan检验，这应该是回归的残差。如果`exog`中给出了数组，那么残差是通过OLS回归或`resid on exog`计算的。在这种情况下，`resid`应包含因变量。`exog`可以与x相同。
+
+- `exog_het`: array_like
+  - 包含怀疑与残差异方差性相关的变量。
+
+- `robust`: bool, 默认为True
+  - 标志，指示是否使用Koenker版本的检验（默认），它假设误差项是独立同分布的，或者是原始的Breusch-Pagan版本，它假设残差正态分布。
+### 返回值
+- `lm`: float
+  - Lagrange乘数统计量。
+
+- `lm_pvalue`: float
+  - Lagrange乘数检验的p值。
+
+- `fvalue`: float
+  - 假设误差方差不依赖于x的F统计量。
+
+- `f_pvalue`: float
+  - F统计量的p值。
+### 注意事项
+- 假设x包含常数项（用于计算自由度和R^2）。
+### 验证
+- Chisquare检验统计量与R-stats中的`bptest`函数的结果是完全一致的（默认studentize=True）。
+### 实现
+
+- 这是使用Greene书中的通用LM检验公式计算的（第17.6节），而不是使用显式公式（第11.4.3节），除非将`robust`设置为False。p值的自由度假设x是满秩的。
+### 参考文献
+
+1. Greene, W. H. 《Econometric Analysis》. New Jersey: Prentice Hall; 第5版. (2002).
+2. Breusch, T. S.; Pagan, A. R. (1979). “A Simple Test for Heteroskedasticity and Random Coefficient Variation”. Econometrica. 47 (5): 1287–1294.
+3. Koenker, R. (1981). “A note on studentizing a test for heteroskedasticity”. Journal of Econometrics 17 (1): 107–112.
