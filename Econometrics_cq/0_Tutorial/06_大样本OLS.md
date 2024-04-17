@@ -127,7 +127,7 @@
 1. $\hat\beta$为一致估计量，即$p\lim_{n \to \infty} \hat\beta = \beta$
 2. $\hat\beta$ 服从渐近正态分布，即$\sqrt n(\hat\beta-\beta) \rightarrow{p}N(0,Avar(\hat\beta))$
 	- $Avar(\hat\beta)$ 为 $\hat\beta$ 的渐近协方差矩阵
-3. 由于大样本理论一般不假设[[5_多元线性回归#^2b980b| 球形扰动项]]，故渐近协方差矩阵 $Avar(\hat\beta)$ 的表达式更为复杂。
+3. 由于大样本理论一般不假设[[05_多元线性回归#^2b980b| 球形扰动项]]，故渐近协方差矩阵 $Avar(\hat\beta)$ 的表达式更为复杂。
 
 #定义 一些计量经济学的术语
 - 如果解释变量与扰动项相关，则称此解释变了为<span style="color:#00b0f0">内生解释变量</span>，否则为<span style="color:#00b0f0">外生解释变量</span>。
