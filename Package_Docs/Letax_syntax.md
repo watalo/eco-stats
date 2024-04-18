@@ -5,6 +5,7 @@
 - 行间公式：$$\Gamma(z) = \int_0^\infty t^{z-1}e^{-t}dt\,.$$
 
   对应的代码块为：python
+$$ \begin{align*}  \overbrace{= some\ expression}^{description} \end{align*} $$
 
 ```python
 $ \Gamma(z) = \int_0^\infty t^{z-1}e^{-t}dt\,. $
