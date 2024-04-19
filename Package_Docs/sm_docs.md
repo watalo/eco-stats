@@ -8,7 +8,7 @@
 
 ---
 
-### 用户指南
+## 用户指南
 
 #### 背景
 - **内生变量和外生变量**：介绍了统计建模中的基本概念，如内生变量（endog）和外生变量（exog）。
@@ -46,10 +46,10 @@
 - **数据集**：介绍了`datasets`包，用于加载和使用标准数据集。
 - **沙盒**：提供了一个实验性功能和代码的测试区域。
 ---
-### 快速入门
+## 快速入门
 
 这是一个非常简单的案例研究，旨在帮助你快速上手statsmodels。
-#### 加载模块和函数
+### 加载模块和函数
 安装statsmodels及其依赖项后，我们需要加载一些模块和函数：
 
 ```python
@@ -61,7 +61,7 @@ from patsy import dmatrices
 - pandas基于numpy数组提供丰富的数据结构和数据分析工具。pandas.DataFrame函数提供带有标签的数组（可能是异构的），类似于R语言中的“data.frame”。pandas.read_csv函数可用于将逗号分隔值文件转换为DataFrame对象。
 - patsy是一个Python库，用于描述统计模型并使用R语言风格的公式构建设计矩阵。
 
-#### 数据
+### 数据
 我们下载了Guerry数据集，这是一组用于支持安德烈-米歇尔·古埃里1833年《法国道德统计论文》的历史数据。数据集由Rdatasets仓库以逗号分隔值格式（CSV）在线托管。我们本可以本地下载文件，然后使用read_csv加载它，但pandas为我们自动处理了这一切：
 
 ```python
@@ -75,11 +75,11 @@ df = df[['Department', 'Lottery', 'Literacy', 'Wealth', 'Region']]
 df = df.dropna()
 ```
 
-#### 动机和模型
+### 动机和模型
 我们想要了解法国86个省的识字率是否与1820年代皇家彩票的人均赌注有关。我们需要控制每个省的财富水平，并希望在我们的回归方程的右侧包括一系列虚拟变量，以控制由于地区效应导致的未观察到的异质性。
 使用普通最小二乘回归（OLS）估计模型。
 
-#### 设计矩阵（内生和外生）
+### 设计矩阵（内生和外生）
 为了拟合statsmodels覆盖的大多数模型，你需要创建两个设计矩阵。第一个是内生变量矩阵（即依赖的、响应的、回归量等）。第二个是外生变量矩阵（即独立的、预测的、回归因子等）。OLS系数估计如常计算：
 
 ```python
@@ -88,7 +88,7 @@ df = df[vars]
 y, X = dmatrices('Lottery ~ Literacy + Wealth + Region', data=df, return_type='dataframe')
 ```
 
-#### 模型拟合和摘要
+### 模型拟合和摘要
 在statsmodels中拟合模型通常涉及3个简单步骤：
 
 1. 使用模型类描述模型
@@ -113,7 +113,7 @@ No. Observations: 85 AIC: 764.6 Df Residuals: 78 BIC: 781.7 Df Model: 6 Covarian
 ...
 ```
 
-#### 诊断和规范检验
+### 诊断和规范检验
 statsmodels允许你进行一系列有用的回归诊断和规范检验。例如，应用Rainbow检验线性（零假设是关系正确建模为线性）：
 
 ```python
@@ -128,11 +128,11 @@ sm.graphics.plot_partregress('Lottery', 'Wealth', ['Region', 'Literacy'], data=d
 ```
 
 ---
-### OLS模型拟合结果的属性与方法
+## OLS模型拟合结果的属性与方法
 ```python
 results = sm.OLS(y,X).fit()
 ```
-#### 方法
+### 方法
 
 | 方法                                                  | 描述                                             |
 | --------------------------------------------------- | ---------------------------------------------- |
@@ -163,7 +163,7 @@ results = sm.OLS(y,X).fit()
 | `wald_test(r_matrix[, cov_p, invcov, use_f, ...])`  | 计算联合线性假设的Wald检验。                               |
 | `wald_test_terms([skip_single, ...])`               | 计算跨越多列项的一系列Wald检验。                             |
 
-#### 属性
+### 属性
 | 属性                 | 描述                                     |
 | ------------------ | -------------------------------------- |
 | `HC0_se`           | White's (1980) 异方差稳健标准误差。              |
@@ -199,7 +199,7 @@ results = sm.OLS(y,X).fit()
 | `uncentered_tss`   | 未中心化的平方和。                              |
 | `use_t`            | 标志，表示在推断中是否使用学生分布。                     |
 | `wresid`           | 转换/漂白的回归变量和回归因子的残差。                    |
-#### `t_test()`的用法
+### `t_test()`的用法
 计算 Rb = q 形式的每个线性假设的 t 检验。b代表回归参数。
 ##### 参数
 **r_matrix**：{array_like, `str`，`tuple`}
@@ -220,11 +220,11 @@ results = sm.OLS(y,X).fit()
 - 如果use_t为None，则使用模型的默认值。
 - 如果use_t为True，则 p 值基于 t 分布。
 - 如果use_t为False，则 p 值基于正态值分配。
-##### 返回
+#### 返回
 ContrastResults
 - 测试的结果是此结果实例的属性。 可用结果具有与参数表相同的元素在`summary()`中。
 
-#### `f_test()`的用法
+### `f_test()`的用法
 用于检验线性假设的方法
 
 参数与t_test()一致
@@ -286,3 +286,92 @@ ContrastResults
 1. Greene, W. H. 《Econometric Analysis》. New Jersey: Prentice Hall; 第5版. (2002).
 2. Breusch, T. S.; Pagan, A. R. (1979). “A Simple Test for Heteroskedasticity and Random Coefficient Variation”. Econometrica. 47 (5): 1287–1294.
 3. Koenker, R. (1981). “A note on studentizing a test for heteroskedasticity”. Journal of Econometrics 17 (1): 107–112.
+
+---
+
+## 自相关图
+
+`statsmodels.graphics.tsaplots.plot_acf` 
+- 是 `statsmodels` 库中的一个函数
+- 用于绘制时间序列数据的自相关函数（ACF）。
+### 函数签名
+```python
+statsmodels.graphics.tsaplots.plot_acf(
+    x,
+    ax=None,
+    lags=None,
+    *,
+    alpha=0.05,
+    use_vlines=True,
+    adjusted=False,
+    fft=False,
+    missing='none',
+    title='Autocorrelation',
+    zero=True,
+    auto_ylims=False,
+    bartlett_confint=True,
+    vlines_kwargs=None,
+    **kwargs
+)
+```
+### 参数说明
+- `x`: 
+	- 数组类型，时间序列值的数组。
+- `ax`: 
+	- `AxesSubplot`，可选，如果提供，将在这个子图上绘制而不是创建新的图形。
+- `lags`:
+	- {int, 数组类型}, 可选，一个整数或滞后值数组，用于水平轴。如果 `lags` 是整数，则使用 `np.arange(lags)`。如果不提供，默认使用 `lags=np.arange(len(corr))`。
+- `alpha`:
+	- 标量，可选，如果给出一个数字，将返回给定置信水平的置信区间。例如，如果 `alpha=0.05`，则返回95%的置信区间，其中标准差根据 Bartlett 公式计算。如果为 `None`，则不绘制置信区间。
+- `use_vlines`: 
+	- 布尔值，可选，如果为 `True`，则绘制垂直线和标记。如果为 `False`，则仅绘制标记。默认标记是 `‘o’`；可以使用 `marker` 关键字参数覆盖。
+- `adjusted`:
+	- 布尔值，如果为 `True`，则自相关系数的分母为 `n-k`，否则为 `n`。
+- `fft`:
+	- 布尔值，可选，如果为 `True`，则通过 FFT 计算 ACF。
+- `missing`:
+	- 字符串，可选，一个字符串 `[‘none’, ‘raise’, ‘conservative’, ‘drop’]` 指定如何处理 NaN。`‘none’` 表示不采取任何措施，`‘raise’` 表示抛出异常，`‘conservative’` 表示删除包含 NaN 的行，`‘drop’` 表示删除 NaN。
+- `title`:
+	- 字符串，可选，放置在图形上的标题。默认是 `‘Autocorrelation’`。
+- `zero`: 
+	- 布尔值，可选，标志是否包括零滞后的自相关。默认是 `True`。
+- `auto_ylims`: 
+	- 布尔值，可选，如果为 `True`，则根据 ACF 值自动调整 y 轴的界限。
+- `bartlett_confint`: 
+	- 布尔值，默认为 `True`，表示置信区间为 ACF 值的 2 个标准误差。如果自相关被用来作为 ARIMA 程序中测试残差随机性的一部分，则假定残差是白噪声，标准误差的近似公式为每个 `r_k` 的标准误差 `= 1/sqrt(N)`。有关 `1/sqrt(N)` 结果的更多细节，请参阅 [1] 的第 9.4 节。有关更基础的讨论，请参阅 [2] 的第 5.3.2 节。对于原始数据的 ACF，滞后 k 的标准误差是按照假设正确的模型是 MA(k-1) 来找到的。这允许可能的解释，即如果所有超过某个滞后的自相关都在限制之内，模型可能是由最后一个显著自相关的顺序定义的 MA。在这种情况下，假设数据的移动平均模型，并使用 Bartlett 公式生成置信区间的标准误差。有关 Bartlett 公式结果的更多细节，请参阅 [1] 的第 7.2 节。
+- `vlines_kwargs`:
+	- 字典，可选，传递给 `vlines` 的可选关键字参数字典。
+- `**kwargs`:
+	- 关键字参数，可选，直接传递给 Matplotlib 的 `plot` 和 `axhline` 函数的关键字参数。
+### 返回值
+- `Figure`: 如果 `ax` 是 `None`，则创建的图形。否则，连接到 `ax` 的图形。
+### 注意
+- 该函数改编自 `matplotlib` 的 `xcorr`。
+- 数据被绘制为 `plot(lags, corr, **kwargs)`。
+- `kwargs` 用于将 Matplotlib 可选参数传递给追踪自相关的线以及在 0 处的水平线。这些选项必须对 `Line2D` 对象有效。
+- `vlines_kwargs` 用于将额外的可选参数传递给连接每个自相关到轴的垂直线。这些选项必须对 `LineCollection` 对象有效。
+### 参考文献
+- [1] Brockwell and Davis, 1987. Time Series Theory and Methods
+- [2] Brockwell and Davis, 2010. Introduction to Time Series and Forecasting, 2nd edition.
+### 示例
+```python
+import pandas as pd
+import matplotlib.pyplot as plt
+import statsmodels.api as sm
+
+# 加载太阳黑子数据集
+dta = sm.datasets.sunspots.load_pandas().data
+# 设置索引为时间序列
+dta.index = pd.Index(sm.tsa.datetools.dates_from_range('1700', '2008'))
+# 删除不必要的列
+del dta["YEAR"]
+# 绘制自相关图，滞后40
+sm.graphics.tsa.plot_acf(dta.values.squeeze(), lags=40)
+# 显示图形
+plt.show()
+```
+
+![[Pasted image 20240420024558.png]]
+
+
+最后更新：2023年12月14日
