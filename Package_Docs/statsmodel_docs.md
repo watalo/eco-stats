@@ -1,5 +1,5 @@
 
-# Statsmodels官方文档摘要
+# 文档摘要
 
 --- 
  statsmodels 0.14.1
@@ -7,7 +7,6 @@
 > 使用kimi.ai生成的翻译文档
 
 ---
-
 ## 用户指南
 
 #### 背景
@@ -231,7 +230,79 @@ ContrastResults
 
 返回值只有一个数值。
 
-#### `OLSResults.HC0_se` 
+### `get_robustcov_results()`的用法
+
+```python
+OLSResults.get_robustcov_results(
+	 cov_type='HC1', 
+	 use_t=None, 
+	 **kwargs
+ )
+```
+
+创建一个具有稳健协方差矩阵的新结果实例作为默认值。
+#### 参数 (Parameters)
+- `cov_type`: str
+  使用哪种稳健的三明治估计器。详见下面的注释(Notes)。
+
+- `use_t`: bool
+  如果为真，则使用t分布进行推断。如果为假，则使用正态分布。如果`use_t`为`None`，则使用适当的默认值，当`cov_type`是非稳健的，`use_t`为真；在所有其他情况下为假。
+
+- `**kwargs`: 
+  稳健协方差计算所需的必需或可选参数。详见下面的注释(Notes)。
+#### 返回值 (Returns)
+- `RegressionResults`
+  该方法创建一个新的结果实例，将请求的稳健协方差作为参数的默认协方差。像p值和假设检验这样的推断统计将基于这个协方差矩阵。
+#### 注释 (Notes)
+- 目前可用的协方差类型和所需的或可选的参数如下：
+  - `'fixed scale'` 使用预定义的尺度
+    - `scale`: float, 可选
+      设置尺度的参数。默认为1。
+  - `'HC0'`, `'HC1'`, `'HC2'`, `'HC3'`: 异方差性稳健协方差
+    - 无需关键词参数
+  - `'HAC'`: 异方差性-自相关稳健协方差
+    - `maxlags`: 整数, 必需
+      使用的滞后数
+    - `kernel`: {可调用对象, str}, 可选
+      目前可用的核函数是 `['bartlett', 'uniform']`，默认是Bartlett
+    - `use_correction`: bool, 可选
+      如果为真，使用小样本校正
+  - `'cluster'`: 聚类协方差估计器
+    - `groups`: array_like[int], 必需
+      聚类或组的整数值索引
+    - `use_correction`: bool, 可选
+      如果为真，三明治协方差计算时使用小样本校正。如果为假，计算时不使用小样本校正
+    - `df_correction`: bool, 可选
+      如果为真（默认），则推断统计和假设检验（例如p值，f_pvalue, conf_int, 和 t_test 和 f_test）的自由度基于组数减一，而不是总观测值数减去解释变量数。结果实例的df_resid也将调整。当`use_t`也为真时，使用校正值使用学生t分布计算p值。如果组数很小，这可能与基于正态分布的p值有较大差异。如果为假，则结果实例的df_resid不调整。
+  - `'hac-groupsum'`: Driscoll和Kraay的面板数据异方差性和自相关稳健协方差
+    - 这里需要更多的选项
+    - `time`: array_like, 必需
+      时间周期的索引
+    - `maxlags`: 整数, 必需
+      使用的滞后数
+    - `kernel`: {可调用对象, str}, 可选
+      可用的核函数是 `['bartlett', 'uniform']`，默认是Bartlett
+    - `use_correction`: {False, 'hac', 'cluster'}, 可选
+      如果为假，则计算三明治协方差时不使用小样本校正。如果`use_correction`为 `'cluster'`（默认），则使用与`cov_type='cluster'`相同的小样本校正
+    - `df_correction`: bool, 可选
+      df_resid的调整，见上面的`'cluster'`协方差类型
+  - `'hac-panel'`: 面板数据中的异方差性和自相关稳健标准误。在这种情况下，数据需要被排序，每个面板单元或聚类的时序需要被堆叠。个体或组的时间序列成员资格可以通过组指示符或通过递增的时间周期指定。需要组或时间之一。
+    - `groups`: array_like[int]
+      组的指标
+    - `time`: array_like[int]
+      时间周期的索引
+    - `maxlags`: int, 必需
+      使用的滞后数
+    - `kernel`: {可调用对象, str}, 可选
+      可用的核函数是 `['bartlett', 'uniform']`，默认是Bartlett
+    - `use_correction`: {False, 'hac', 'cluster'}, 可选
+      如果为假，计算三明治协方差时不使用小样本校正
+    - `df_correction`: bool, 可选
+      df_resid的调整，见上面的`'cluster'`协方差类型
+
+提醒：在`'hac-groupsum'`和`'hac-panel'`中，`use_correction`不是布尔值，需要在 {False, ‘hac’, ‘cluster’} 中。
+
+### `OLSResults.HC0_se` 
 
 是一个用于计算异方差稳健标准误的方法，它基于White(1980)提出的一种技术。这种标准误的计算方法可以对存在异方差性（即误差项的方差不是恒定的）的回归模型进行校正。
 
@@ -246,6 +317,8 @@ ContrastResults
 与此类似的还有`HC1`，`HC2`，`HC3`
 
 ---
+# 异方差
+
 ## BP检验
 
 > statsmodels.stats.diagnostic.het_breuschpagan 
@@ -288,7 +361,7 @@ ContrastResults
 3. Koenker, R. (1981). “A note on studentizing a test for heteroskedasticity”. Journal of Econometrics 17 (1): 107–112.
 
 ---
-
+# 自相关
 ## 自相关图
 
 `statsmodels.graphics.tsaplots.plot_acf` 
@@ -351,8 +424,8 @@ statsmodels.graphics.tsaplots.plot_acf(
 - `kwargs` 用于将 Matplotlib 可选参数传递给追踪自相关的线以及在 0 处的水平线。这些选项必须对 `Line2D` 对象有效。
 - `vlines_kwargs` 用于将额外的可选参数传递给连接每个自相关到轴的垂直线。这些选项必须对 `LineCollection` 对象有效。
 ### 参考文献
-- [1] Brockwell and Davis, 1987. Time Series Theory and Methods
-- [2] Brockwell and Davis, 2010. Introduction to Time Series and Forecasting, 2nd edition.
+1. Brockwell and Davis, 1987. Time Series Theory and Methods
+2. Brockwell and Davis, 2010. Introduction to Time Series and Forecasting, 2nd edition.
 ### 示例
 ```python
 import pandas as pd
@@ -374,4 +447,107 @@ plt.show()
 ![[Pasted image 20240420024558.png]]
 
 
-最后更新：2023年12月14日
+ 最后更新：2023年12月14日
+
+---
+## 自相关 Q检验
+
+> statsmodels.stats.diagnostic.acorr_ljungbox - statsmodels 0.14.1
+### statsmodels.stats.diagnostic.acorr_ljungbox
+```python
+statsmodels.stats.diagnostic.acorr_ljungbox(
+	x, 
+	lags=None, 
+	boxpierce=False, 
+	model_df=0, 
+	period=None, 
+	return_df=True, 
+	auto_lag=False
+)
+```
+
+Ljung-Box自相关残差检验。
+### 参数
+- `x`: 数组类型
+  数据序列。在计算检验统计量之前，数据会被去均值。
+- `lags`: {整型, 数组类型}, 默认为None
+  如果lags是整数，则被认为是包含的最大滞后，测试结果会报告所有较小滞后长度的滞后。如果lags是列表或数组，则包括列表中的最大滞后的所有滞后，但只报告列表中滞后的测试。如果lags为None，则默认maxlag是min(10, nobs // 5)。如果设置了period，则默认滞后数会改变。
+- `boxpierce`: 布尔值，默认为False
+  如果为真，则除了Ljung-Box检验的结果外，还会返回Box-Pierce检验的结果。
+- `model_df`: 整型，默认为0
+  模型消耗的自由度数量。在ARMA模型中，这个值通常是p+q，其中p是AR阶数，q是MA阶数。这个值会从测试中使用的自由度中减去，以便统计量的调整后的自由度为l`ags - model_df`。如果`lags - model_df <= 0`，则返回NaN。
+- `period`: 整型，默认为`None`
+  季节性时间序列的周期。用于计算季节性数据的最大滞后，如果设置了，则使用`min(2*period, nobs // 5)`。如果为None，则使用默认规则设置滞后数。设置时，必须 >= 2。
+- `auto_lag`: 布尔值，默认为`False`
+  标志，指示是否基于最大相关值的阈值自动确定最优滞后长度。
+### 返回
+- `DataFrame`
+  带有以下列的框架：
+  - `lb_stat` - Ljung-Box检验统计量。
+  - `lb_pvalue` - 基于卡方分布的p值。p值计算为1 - chi2.cdf(lb_stat, dof)，其中dof是lags - model_df。如果lags - model_df <= 0，则返回NaN作为p值。
+  - `bp_stat` - Box-Pierce检验统计量。
+  - `bp_pvalue` - Box-Pierce检验基于卡方分布的p值。p值计算为1 - chi2.cdf(bp_stat, dof)，其中dof是lags - model_df。如果lags - model_df <= 0，则返回NaN作为p值。
+
+### 注意
+Ljung-Box和Box-Pierce统计量在自相关函数的缩放上有所不同。Ljung-Box检验具有更好的有限样本属性。
+### 另见
+- `statsmodels.regression.linear_model.OLS.fit`: 回归模型拟合。
+- `statsmodels.regression.linear_model.RegressionResults`: 线性回归模型的结果。
+- `statsmodels.stats.stattools.q_stat`: 从估计的自相关计算的Ljung-Box检验统计量。
+### 参考文献
+- [*] Green, W. “Econometric Analysis,” 5th ed., Pearson, 2003.
+- [†] J. Carlos Escanciano, Ignacio N. Lobato “An automatic Portmanteau test for serial correlation.”, Volume 151, 2009.
+### 示例
+```python
+import statsmodels.api as sm
+
+# 加载数据集
+data = sm.datasets.sunspots.load_pandas().data
+# 使用ARMA模型拟合太阳黑子活动数据
+res = sm.tsa.ARMA(data["SUNACTIVITY"], (1,1)).fit(disp=-1)
+# 进行Ljung-Box检验，设置滞后为10，并返回DataFrame
+print(sm.stats.acorr_ljungbox(res.resid, lags=[10], return_df=True))
+```
+
+最后更新2023年12月14日
+
+---
+## 处理方法：HAC稳健标准误
+
+Newey-West方法需要采用下面这个方法中一种。
+使用 [[#`get_robustcov_results()`的用法|get_robustcov_results()]] 实现。
+### 案例：
+
+假设我们有一组时间序列数据，我们怀疑存在异方差性和自相关性，我们想要使用`NeweyWest`方法来计算稳健的标准误。以下是如何使用`statsmodels`库进行此计算的示例：
+
+```python
+import numpy as np
+import statsmodels.api as sm
+
+# 模拟一些时间序列数据
+np.random.seed(123)
+x = np.random.randn(100, 2)  # 自变量
+y = np.dot(x, [1.5, -0.5]) + np.random.randn(100)  # 因变量
+# 添加常数项
+x = sm.add_constant(x)
+# 进行OLS回归
+model = sm.OLS(y, x).fit()
+# 使用Newey-West方法计算稳健协方差矩阵
+nw_cov = model.get_robustcov_results(cov_type='HAC', maxlags=1, use_correction=True)
+# 从稳健协方差矩阵中提取标准误
+nw_se = np.sqrt(np.diag(nw_cov))
+# 打印稳健标准误
+print("Newey-West 稳健标准误:", nw_se)
+```
+
+在这个案例中，我们首先生成了一些模拟的时间序列数据，然后使用OLS进行了回归。
+接着，我们使用`get_robustcov_results`方法计算了`NeweyWest`稳健协方差矩阵，并从中提取了标准误。`maxlags=1`表示我们使用了1个滞后，`use_correction=True`表示我们在估计中使用了小样本校正。
+
+
+
+
+
+
+
+
+
