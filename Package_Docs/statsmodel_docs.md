@@ -127,11 +127,11 @@ sm.graphics.plot_partregress('Lottery', 'Wealth', ['Region', 'Literacy'], data=d
 ```
 
 ---
-## OLS模型拟合结果的属性与方法
+# OLS模型拟合结果的属性与方法
 ```python
 results = sm.OLS(y,X).fit()
 ```
-### 方法
+## 方法
 
 | 方法                                                  | 描述                                             |
 | --------------------------------------------------- | ---------------------------------------------- |
@@ -162,7 +162,7 @@ results = sm.OLS(y,X).fit()
 | `wald_test(r_matrix[, cov_p, invcov, use_f, ...])`  | 计算联合线性假设的Wald检验。                               |
 | `wald_test_terms([skip_single, ...])`               | 计算跨越多列项的一系列Wald检验。                             |
 
-### 属性
+## 属性
 | 属性                 | 描述                                     |
 | ------------------ | -------------------------------------- |
 | `HC0_se`           | White's (1980) 异方差稳健标准误差。              |
