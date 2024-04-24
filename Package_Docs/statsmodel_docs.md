@@ -543,11 +543,116 @@ print("Newey-West 稳健标准误:", nw_se)
 在这个案例中，我们首先生成了一些模拟的时间序列数据，然后使用OLS进行了回归。
 接着，我们使用`get_robustcov_results`方法计算了`NeweyWest`稳健协方差矩阵，并从中提取了标准误。`maxlags=1`表示我们使用了1个滞后，`use_correction=True`表示我们在估计中使用了小样本校正。
 
+以下是`statsmodels.stats.diagnostic.linear_reset`函数的文档内容翻译，以及一个Markdown格式的示例案例：
 
+#  函数形式检验（RESET检验）
 
+#### statsmodels.stats.diagnostic.linear_reset
+```python
+statsmodels.stats.diagnostic.linear_reset(
+	res, 
+	power=3, 
+	test_type='fitted', 
+	use_f=False, 
+	cov_type='nonrobust', 
+	cov_kwargs=None
+)
+```
+Ramsey的遗漏非线性检验。
+#### 参数
+- `res`: RegressionResults
+  线性回归的结果实例。
+- `power`: `{int, List[int]}`, 默认为3
+  如果为整数，则表示在模型中包含的最大幂次，包括幂次2, 3, ..., power。如果为整数列表，则包含列表中的所有幂次。
+- `test_type`: str, 默认为"fitted"
+  使用的增强类型：
+  - "fitted": 默认，用拟合值的幂次增强回归变量。
+  - "exog": 用外生变量的幂次增强外生变量，排除二元回归变量。
+  - "princomp": 用外生变量的首个主成分的幂次增强外生变量。
+- `use_f`: bool, 默认为False
+  标志，指示是否使用F检验（True）或卡方检验（False）。
+- `cov_type`: str, 默认为"nonrobust"
+  协方差类型。默认为“nonrobust”，使用经典的OLS协方差估计器。可以指定“HC0”，“HC1”，“HC2”，“HC3”之一来使用White的协方差估计器。OLS.fit支持的所有协方差类型都被接受。
+- `cov_kwargs`: dict, 默认为None
+  传递给OLS.fit的协方差选项字典。详见OLS.fit的文档。
+#### 返回值
+ContrastResults
+Ramsey重置检验的测试结果。有关实现细节，请参见注释。
+#### 注释
+RESET检验使用增强回归的形式，其中Z是以下之一的一组回归变量：
+- 原始回归的拟合值的幂次。
+- 外生变量的幂次，不包括常数和二元回归变量。
+- 外生变量的首个主成分的幂次。如果模型包含常数，此列在计算主成分之前将被删除。在任一情况下，主成分是从剩余列的相关矩阵中提取的。
 
+检验是关于零假设的Wald检验。如果`use_f`为True，则二次型检验统计量除以限制数量，使用F分布来计算临界值。
+#### 示例案例
 
+```python
+import statsmodels.api as sm
+import pandas as pd
 
+# 假设df是包含自变量和因变量的DataFrame
+df = pd.DataFrame({
+    'y': [3, -1.2, 4.5, 2.8, 5],
+    'x1': [1, 2, 3, 4, 5],
+    'x2': [2, 4, 6, 8, 10]
+})
 
+# 定义因变量和自变量
+y = df['y']
+X = df[['x1', 'x2']]
 
+# 添加常数项并拟合线性回归模型
+X = sm.add_constant(X)
+model = sm.OLS(y, X).fit()
+
+# 使用linear_reset进行RESET检验
+reset_results = sm.stats.diagnostic.linear_reset(model, power=[1, 2, 3])
+
+# 输出检验结果
+print(reset_results)
+```
+
+在这个示例中，我们首先创建了一个包含因变量`y`和自变量`x1`、`x2`的`DataFrame`。然后，我们为自变量添加了一个常数项，并使用最小二乘法拟合了一个线性回归模型。接着，我们调用`linear_reset`函数对模型进行RESET检验，`power=[1, 2, 3]`意味着我们考虑了原始回归变量及其平方和立方的幂次作为潜在的遗漏非线性项。
+
+请注意，具体的实现和参数可能会根据`statsmodels`的版本有所不同。你应该查阅你所使用的版本的官方文档以获取最准确的信息。
+
+# 多重共线性检验
+
+#### statsmodels.stats.outliers_influence.variance_inflation_factor
+```python
+statsmodels.stats.outliers_influence.variance_inflation_factor(
+	exog, 
+	exog_idx
+)
+```  
+方差膨胀因子（Variance Inflation Factor，简称VIF）是衡量当将一个额外的变量（由`exog_idx`指定）添加到线性回归中时，参数估计量方差的增加程度的指标。它是设计矩阵`exog`多重共线性的度量。
+如果VIF大于5，则表明由`exog_idx`指定的解释变量与其他解释变量高度共线性，因此参数估计将因此具有较大的标准误差。
+#### 参数
+- `exog`: {ndarray, DataFrame}
+  回归中使用的所有解释变量的设计矩阵。
+- `exog_idx`: int
+  在`exog`列中的外生变量的索引。
+#### 返回
+- float
+  方差膨胀因子。
+#### 注意事项
+此函数不保存辅助回归。
+### 参考
+- [方差膨胀因子 - Wikipedia](https://en.wikipedia.org/wiki/Variance_inflation_factor)
+#### 示例
+假设我们有一个设计矩阵`X`和一个我们想要检查共线性的变量索引`i`，我们可以使用以下代码计算VIF：
+
+```python
+import statsmodels.api as sm
+# 假设X是一个NumPy数组或pandas DataFrame，包含了我们的解释变量
+X = ...  # 你的数据
+# 我们想要检查的变量的索引
+i = ...
+# 计算VIF
+vif = sm.stats.outliers_influence.variance_inflation_factor(X, i)
+
+print(f"Variance Inflation Factor for variable at index {i}: {vif}")
+```
+请注意，这只是一个示例，实际使用时需要替换`X`和`i`为你自己的数据和变量索引。
 
