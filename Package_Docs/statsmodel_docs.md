@@ -655,3 +655,113 @@ print(f"Variance Inflation Factor for variable at index {i}: {vif}")
 ```
 请注意，这只是一个示例，实际使用时需要替换`X`和`i`为你自己的数据和变量索引。
 
+# 离散因变量的回归
+
+用于有限和定性因变量的回归模型。当前模块允许估计具有二元（Logit, Probit）、名义（MNLogit）或计数（Poisson, NegativeBinomial）数据的模型。
+
+从0.9版本开始，这还包括新的计数模型，这些模型在0.9版本中仍然是实验性的，包括NegativeBinomialP、GeneralizedPoisson和零膨胀模型，ZeroInflatedPoisson、ZeroInflatedNegativeBinomialP和ZeroInflatedGeneralizedPoisson。
+
+查看 [Module Reference](https://www.statsmodels.org/stable/discretemod.html#module-reference)以获取命令和参数。
+
+## 示例
+```python
+# 从Spector和Mazzeo (1980)加载数据
+import statsmodels.api as sm
+spector_data = sm.datasets.spector.load_pandas()
+spector_data.exog = sm.add_constant(spector_data.exog)
+# Logit模型
+logit_mod = sm.Logit(spector_data.endog, spector_data.exog)
+logit_res = logit_mod.fit()
+print(logit_res.summary())
+```
+Logit回归结果
+```
+==============================================================================
+Dep. Variable: GRADE   No. Observations: 32
+Model: Logit   Df Residuals: 28
+Method: MLE   Df Model: 3
+Date: Thu, 14 Dec 2023
+Pseudo R-squ.: 0.3740
+Time: 14:49:28
+Log-Likelihood: -12.890
+converged: True
+LL-Null: -20.592
+Covariance Type: nonrobust
+LLR p-value: 0.001502
+==============================================================================
+coef    std err     z    P>|z| [0.025     0.975]
+------------------------------------------------------------------------------------------
+const    -13.0213     4.931    -2.641      0.008    -22.687     -3.356
+GPA       2.8261     1.263      2.238      0.025      0.351      5.301
+TUCE      0.0952     0.142      0.672      0.501     -0.182      0.373
+PSI       2.3787     1.065      2.234      0.025      0.292      4.465
+```
+
+详细示例可以在此处找到：
+- [Overview](https://www.statsmodels.org/stable/examples/notebooks/generated/discrete_choice_overview.html)
+- [Examples](https://www.statsmodels.org/stable/examples/notebooks/generated/discrete_choice_example.html)
+## 技术文档
+
+目前所有模型都是通过最大似然估计，并假设误差独立同分布。
+所有离散回归模型定义了相同的方法，并遵循相同的结构，这与回归结果类似，但具有一些特定于离散模型的方法。
+此外，其中一些包含额外的模型特定方法和属性。
+## 参考文献
+
+这类模型的一般参考文献是：
+```
+A.C. Cameron and P.K. Trivedi.  `Regression Analysis of Count Data`.
+    Cambridge, 1998
+
+G.S. Madalla. `Limited-Dependent and Qualitative Variables in Econometrics`.
+    Cambridge, 1983.
+
+W. Greene. `Econometric Analysis`. Prentice Hall, 5th. edition. 2003.
+```
+
+## 模块引用
+特定模型类包括：
+
+| 模型名称                           | 参数列表示例                                 | 描述                   |
+| ------------------------------ | -------------------------------------- | -------------------- |
+| Logit                          | (endog, exog[, offset, check_rank])    | Logit模型              |
+| Probit                         | (endog, exog[, offset, check_rank])    | Probit模型             |
+| MNLogit                        | (endog, exog[, check_rank])            | 多项式Logit模型           |
+| Poisson                        | (endog, exog[, offset, exposure, ...]) | Poisson模型            |
+| NegativeBinomial               | (endog, exog[, ...])                   | 负二项模型                |
+| NegativeBinomialP              | (endog, exog[, p, offset, ...])        | 广义负二项模型（NB-P）        |
+| GeneralizedPoisson             | (endog, exog[, p, offset, ...])        | 广义Poisson模型          |
+| ZeroInflatedPoisson            | (endog, exog[, ...])                   | Poisson零膨胀模型         |
+| ZeroInflatedNegativeBinomialP  | (endog, exog[, ...])                   | 零膨胀广义负二项模型           |
+| ZeroInflatedGeneralizedPoisson | (endog, exog)                          | 零膨胀广义Poisson模型       |
+| HurdleCountModel               | (endog, exog[, offset, ...])           | 计数数据的障碍模型            |
+| TruncatedLFNegativeBinomialP   | (endog, exog[, ...])                   | 计数数据的截断广义负二项模型       |
+| TruncatedLFPoisson             | (endog, exog[, offset, ...])           | 计数数据的截断Poisson模型     |
+| ConditionalLogit               | (endog, exog[, missing])               | 拟合分组数据的条件逻辑回归模型      |
+| ConditionalMNLogit             | (endog, exog[, missing])               | 拟合分组数据的条件多项式Logit模型  |
+| ConditionalPoisson             | (endog, exog[, missing])               | 拟合分组数据的条件Poisson回归模型 |
+
+目前，针对序数因变量的累积链接模型在miscmodels中，因为它是GenericLikelihoodModel的子类。这将在未来的版本中改变。
+
+| 模型名称      | 参数列表示例                | 描述                   |
+|---------------|----------------------------|------------------------|
+| OrderedModel  | (endog, exog[, offset, distr]) | 基于逻辑或正态分布的序数模型 |
+
+OrderedModel (endog, exog[, offset, distr]) 基于逻辑或正态分布的序数模型
+
+
+特定结果类包括：
+
+
+DiscreteModel是所有离散回归模型的超类。估计结果作为DiscreteResults的一个子类的实例返回。每个模型类别，二元、计数和多项式，都有自己的中间级别的模型和结果类。这些中间类主要是为了便于实现由DiscreteModel和DiscreteResults定义的方法和属性。
+
+| 模型名称             | 参数列表示例                         | 描述                             |
+|----------------------|------------------------------------|----------------------------------|
+| DiscreteModel        | (endog, exog[, check_rank])         | 离散选择模型的抽象类            |
+| DiscreteResults      | (model, mle_fit[, cov_type, ...])  | 离散因变量模型的结果类          |
+| BinaryModel          | (endog, exog[, offset, check_rank]) | 二元数据的模型                  |
+| BinaryResults        | (model, mle_fit[, cov_type, ...])  | 二元数据的结果类                |
+| CountModel           | (endog, exog[, offset, exposure, ...]) | 计数数据的模型                  |
+| MultinomialModel    | (endog, exog[, offset, ...])       | 多项式数据的模型                |
+| GenericZeroInflated  | (endog, exog[, ...])               | 通用零膨胀模型                  |
+
+
