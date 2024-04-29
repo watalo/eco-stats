@@ -488,3 +488,14 @@ $$
 `www.mathjax.org`
 
 [Beautiful math in all browsers](https://www.mathjax.org/)
+
+
+$$\begin{equation}\begin{split}
+
+P(y=1|x)&=P(y^*>0|x)\\  
+
+&=P(x'\beta+\epsilon>0)\\
+
+& =i
+
+\end{split}\end{equation}$$

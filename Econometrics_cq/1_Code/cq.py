@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 '''
-@File    :   chapter_07.py
+@File    :   cq.py
 @Time    :   2024/04/16 22:17:45
 @Author  :   watalo 
 @Version :   1.0
@@ -103,6 +103,43 @@ class Wls:
             return results
         else:
             raise ValueError('model参数错误,请选择ols或wls')
+        
+        
+def describe_bcmodel(df, frequency, target=None, condition_col=None, condition=None):
+    '''describe_bcmodel 二值模型的描述性统计，返回原始数据
+    Arguments:
+        df:dataframe -- 含有频次的数据集
+        frequency:str --  频次的字段名
+
+    Keyword Arguments:
+        target:str -- 观测对象的字段名 (default: {None})
+        condition_col:str -- 条件变量的字段名 (default: {None})
+        condition:any -- 条件值 (default: {None})
+
+    Returns:
+         -- 按频次还原后的数据集
+    '''
+    result = df.loc[np.repeat(df.index.values, df[frequency])].drop(frequency, axis=1).reset_index(drop=True)
+    if (target is None) and (condition_col is None): 
+        print(result.describe().T) 
+    else:
+        result = result[[target, condition_col]][result[condition_col] == condition].drop(condition_col, axis=1).reset_index(drop=True)
+        print(f'when {condition_col} is {condition}:')
+        print(result.describe().T)
+        return result
+    return result
+
+
+def odds_ratio(results):
+    odds_ratios = np.exp(results.params)
+    result_logit_or = pd.DataFrame({'odds ratio': odds_ratios, 
+                                    'std err': results.bse,
+                                    'z':results.tvalues,
+                                    'p>|z|':results.pvalues,
+                                    }, 
+                                index=results.params.index)
+    pd.set_option('display.float_format', '{:.4f}'.format)
+    return result_logit_or
 
 if __name__ == '__main__':
    pass
