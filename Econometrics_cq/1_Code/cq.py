@@ -141,5 +141,16 @@ def odds_ratio(results):
     pd.set_option('display.float_format', '{:.4f}'.format)
     return result_logit_or
 
+
+# class Panel:
+    
+#     def __init__(self,data):
+#         self.data = data
+
+
+
+
+
+
 if __name__ == '__main__':
    pass

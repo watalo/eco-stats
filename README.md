@@ -1,7 +1,11 @@
 # eco-stats
 
 Something about Professor Chen Qiang's 'Econometrics and Stata Application' 
-关于陈强教授《计量经济学及Stata应用》的一些内容
+
+本文是关于陈强教授《计量经济学及Stata应用》（第二版）的一些内容
+- [陈强教授个人网站，提供课程相关数据及课件](http://www.econometrics-stata.com/)
+本项目地址
+[watalo/eco-stats (github.com)](https://github.com/watalo/eco-stats)
 
 ---
 ## 使用的软件
