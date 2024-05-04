@@ -143,7 +143,7 @@ def odds_ratio(results):
     pd.set_option('display.float_format', '{:.4f}'.format)
     return result_logit_or
 
-
+## Ch12：时间序列中用到的函数
 
 def acfgram(time_series,lags=10):
     '''acgram 绘制时间序列的自相关图和偏自相关图,并返回acf和pacf的结果
@@ -189,6 +189,48 @@ def acfgram(time_series,lags=10):
     plt.show()
     
     return result_df
+
+
+def estimate_p(data, col, lags):
+    '''estimate_p 用于估计AR模型的p值
+        集中显示k阶ar模型的p值,AIC,BIC
+    Arguments:
+        data -- dataframe: 包含时间序列数据的
+        col  -- str:       时间序列的列名
+        lags -- int:       假设的AR模型最大阶数
+    returns:
+        df -- dataframe: 包含lags阶AR模型的p值,AIC,BIC
+                         - 每阶只显示最大阶数的值
+    '''
+    
+    def _AR_p(data, col, lag):
+        endog = data[col]
+        exog_var =[]
+        for i in range(1,lag+1):
+            data[f'{col}_l{i}']=data['dlny'].shift(i)
+            exog_var.append(f'{col}_l{i}')     
+        exog = sm.add_constant(data[exog_var])  
+        res=sm.OLS(endog=endog, exog=exog, missing='drop').fit(cov_type='HC1')
+        return res.params.index[-1], res.nobs, res.pvalues[-1], res.aic, res.bic
+    
+    
+    df = pd.DataFrame({'index':['nobs', 'p-value', 'AIC', 'BIC']})
+    df.set_index('index', inplace=True)
+    for i in range(lags):
+        _ = _AR_p(data, col, i+1)
+        df[_[0]] = _[1:]
+        
+    df =  df.T
+    min_ = df[['AIC', 'BIC']].min()
+    for col,row in df[['p-value','AIC', 'BIC']].iterrows():
+        if row['AIC'] == min_['AIC']:
+            df.loc[col, 'AIC'] = f"{row['AIC']:.4f}[min]"
+        if row['BIC'] == min_['BIC']:
+            df.loc[col, 'BIC'] = f"{row['BIC']:.4f}[min]"
+        if row['p-value'] > 0.05:
+            df.loc[col, 'p-value'] = f"{row['p-value']:.5f}[>0.05]"
+            
+    return df
 
 if __name__ == '__main__':
    pass
