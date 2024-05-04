@@ -12,8 +12,10 @@ import pandas as pd
 import numpy as np
 import statsmodels.api as sm
 import seaborn as sns
+import matplotlib.pyplot as plt
 from math import log, exp
 from statsmodels.stats.diagnostic import het_breuschpagan,het_white
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 
 class Wls:
     def __init__(self, data, X_ls: list, y: str, X_aux: list):
@@ -142,6 +144,51 @@ def odds_ratio(results):
     return result_logit_or
 
 
+
+def acfgram(time_series,lags=10):
+    '''acgram 绘制时间序列的自相关图和偏自相关图,并返回acf和pacf的结果
+        达到类似与其他统计软件一样的效果
+    Arguments:
+        time_series -- pd.Series,array-like, 时间序列
+        
+    Keyword Arguments:
+        lags -- int, 最大滞后阶数 (default: {10})
+        
+    Returns:
+        1.plot:绘制时间序列的序列图、acf图和pacf图
+        2.dataframe:返回字段命为lags acf pacf Q和Prob(Q)的数据
+            - Q、Prob(Q) -- acf的统计量
+    '''
+    # 计算自相关系数
+    acf_result = sm.tsa.acf(time_series,
+                            nlags = lags,
+                            qstat=True,
+                            fft=False)
+    # 计算偏自相关系数
+    pacf_result = sm.tsa.pacf(time_series, nlags=lags)
+    
+    # 创建DataFrame来存储结果
+    result_df = pd.DataFrame({
+        'Lags': np.arange(1,lags+1),
+        'ACF': acf_result[0][1:],
+        'PACF': pacf_result[1:],
+        'Q':acf_result[1],
+        'Prob(Q)': acf_result[2]  
+    })
+    
+    # 绘制自相关图
+    _, axes = plt.subplots(nrows=3, ncols=1, figsize=(15, 15), dpi=400)
+    ## 分别画出3个图
+    time_series.plot(ax=axes[0])
+    plot_acf(time_series, lags=lags,ax=axes[1])
+    plot_pacf(time_series,lags=lags,ax=axes[2])
+    ## 设置图标题
+    axes[0].set_title('Time-Series') 
+    axes[1].set_title('Autocorrelation') 
+    axes[2].set_title('Partial-Autocorrelation') 
+    plt.show()
+    
+    return result_df
 
 if __name__ == '__main__':
    pass
