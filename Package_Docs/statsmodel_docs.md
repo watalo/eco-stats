@@ -763,5 +763,97 @@ DiscreteModel是所有离散回归模型的超类。估计结果作为DiscreteRe
 | CountModel           | (endog, exog[, offset, exposure, ...]) | 计数数据的模型                  |
 | MultinomialModel    | (endog, exog[, offset, ...])       | 多项式数据的模型                |
 | GenericZeroInflated  | (endog, exog[, ...])               | 通用零膨胀模型                  |
+# 时间序列分析 tsa
 
+`statsmodels.tsa` 包含对时间序列分析有用的模型类和函数。基本模型包括单变量自回归模型 (AR)、向量自回归模型 (VAR) 和单变量自回归移动平均模型 (ARMA)。非线性模型包括马尔可夫切换动态回归和自回归。它还包括时间序列的描述性统计，例如自相关、偏自相关函数和周期图，以及 ARMA 或相关过程的理论属性。它还包括处理自回归和移动平均滞后多项式的方法。此外，还有相关的统计测试和一些有用的辅助函数可用。
+估计可以通过精确或条件最大似然法或条件最小二乘法进行，使用卡尔曼滤波器或直接滤波器。
+目前，必须从相应的模块导入函数和类，但主要类将在 statsmodels.tsa 命名空间中提供。statsmodels.tsa 内的模块结构是：
+
+- `stattools`：实证属性和测试，acf、pacf、granger-causality、adf 单位根测试、kpss 测试、bds 测试、ljung-box 测试等。
+- `ar_model`：单变量自回归过程，使用条件和精确最大似然估计和条件最小二乘法。
+- `arima.model`：单变量 ARIMA 过程，使用替代方法估计。
+- `statespace`：全面的的状态空间模型规范和估计。见状态空间文档。
+- `vector_ar`, `var`：向量自回归过程 (VAR) 和向量误差校正模型，估计、脉冲响应分析、预测误差方差分解和数据可视化工具。见 vector_ar 文档。
+-` arma_process`：具有给定参数的 arma 过程的属性，包括将 ARMA、MA 和 AR 表示法之间转换的工具，以及 acf、pacf、谱密度、脉冲响应函数等。
+- `sandbox.tsa.fftarma`：类似于 arma_process，但在频率域中工作。
+- `tsatools`：额外的辅助函数，用于创建滞后变量数组，构建趋势回归器，去趋势等。
+- `filters`：用于过滤时间序列的辅助函数。
+- `regime_switching`：马尔可夫切换动态回归和自回归模型。
+
+一些对时间序列分析也有帮助的其他函数位于 statsmodels 的其他部分，例如额外的统计测试。
+一些相关函数也可在 matplotlib、nitime 和 scikits.talkbox 中找到。这些函数更多地设计用于信号处理，其中更长的时间序列可用，并且更经常地在频率域中工作。
+
+## 描述性统计和测试
+
+| 函数及参数                                              | 说明                                       |
+| -------------------------------------------------- | ---------------------------------------- |
+| stattools.acovf (x[, adjusted, demean, fft, ...])  | 估计自协方差。                                  |
+| stattools.acf (x[, adjusted, nlags, qstat, ...])   | 计算自相关函数。                                 |
+| stattools.pacf (x[, nlags, method, alpha])         | 偏自相关估计。                                  |
+| stattools.pacf_yw (x[, nlags, method])             | 使用非递归 yule_walker 估计偏自相关。                |
+| stattools.pacf_ols (x[, nlags, efficient, ...])    | 通过 OLS 计算偏自相关。                           |
+| stattools.pacf_burg (x[, nlags, demean])           | 计算 Burg 的偏自相关估计器。                        |
+| stattools.ccovf (x, y[, adjusted, demean, fft])    | 计算两个序列之间的交叉协方差。                          |
+| stattools.ccf (x, y[, adjusted, fft, nlags, ...])  | 交叉相关函数。                                  |
+| stattools.adfuller (x[, maxlag, regression, ...])  | 增广 Dickey-Fuller 单位根测试。                  |
+| stattools.kpss (x[, regression, nlags, store])     | Kwiatkowski-Phillips-Schmidt Shin 测试平稳性。 |
+| stattools.range_unit_root_test (x[, store])        | 范围单位根测试平稳性。                              |
+| stattools.zivot_andrews                            | Zivot-Andrews 结构性断点单位根测试。                |
+| stattools.coint (y0, y1[, trend, method, ...])     | 测试单变量方程无协整。                              |
+| stattools.bds (x[, max_dim, epsilon, distance])    | BDS 测试时间序列独立性的统计量。                       |
+| stattools.q_stat (x, nobs)                         | 计算 Ljung-Box Q 统计量。                      |
+| stattools.breakvar_heteroskedasticity_test (resid) | 测试残差的异方差性。                               |
+| stattools.grangercausalitytests (x, maxlag[, ...]) | 四个测试 2 时间序列的 granger 非因果关系。              |
+| stattools.levinson_durbin (s[, nlags, isacov])     | 自回归过程的 Levinson-Durbin 递归。               |
+| stattools.innovations_algo (acov[, nobs, rtol])    | 创新算法将自协方差转换为 MA 参数。                      |
+| stattools.innovations_filter (endog, theta)        | 使用创新算法过滤观测值。                             |
+| stattools.levinson_durbin_pacf (pacf[, nlags])     | Levinson-Durbin 算法返回 acf 和 ar 系数。        |
+| stattools.arma_order_select_ic (y[, max_ar, ...])  | 为许多 ARMA 模型计算信息准则。                       |
+| x13.x13_arima_select_order (endog[, ...])          | 使用 x12/x13 ARIMA 执行自动季节性 ARIMA 顺序识别。     |
+| x13.x13_arima_analysis (endog[, maxorder, ...])    | 执行月度或季度数据的 x13-arima 分析。                 |
+
+## 估计
+
+以下是主要的估计类，可以通过 statsmodels.tsa.api 访问以及它们的结果类：
+### 单变量自回归过程 (AR)
+Statsmodels 中的基本自回归模型是：
+
+| 函数及参数 | 说明 |
+| --- | --- |
+| ar_model.AutoReg (endog, lags[, trend, ...]) | 自回归 AR-X(p) 模型 |
+| ar_model.AutoRegResults (model, params, ...) | 用于保存拟合 AutoReg 模型结果的类 |
+| ar_model.ar_select_order (endog, maxlag[, ...]) | 自回归 AR-X(p) 模型顺序选择 |
+
+ar_model.AutoReg 模型使用条件 MLE (OLS) 估计参数，并支持外生回归器（AR-X 模型）和季节效应。
+AR-X 和相关模型也可以使用 arima.ARIMA 类和 SARIMAX 类拟合（通过卡尔曼滤波器使用完整的 MLE）。
+见笔记本 Autoregressions 以获得概述。
+
+### 自回归移动平均过程 (ARMA) 和卡尔曼滤波器
+基本 ARIMA 模型和结果类如下：
+
+| 函数及参数 | 说明 |
+| --- | --- |
+| arima.model.ARIMA (endog[, exog, order, ...]) | 自回归积分移动平均 (ARIMA) 模型和扩展 |
+| arima.model.ARIMAResults (model, params, ...) | 用于保存拟合 SARIMAX 模型结果的类 |
+此模型允许通过各种方法（包括通过 Hannan-Rissanen 方法的条件 MLE 和通过卡尔曼滤波器的完整 MLE）估计参数。它是 SARIMAX 模型的特殊情况，并且它从状态空间模型继承了大量特性（包括预测 / 预测，残差诊断，模拟和脉冲响应等）。
+见笔记本 ARMA: Sunspots Data 和 ARMA: Articial Data 以获得概述。
+
+### 指数平滑
+
+线性和非线性指数平滑模型可用：
+
+| 函数及参数 | 说明 |
+| --- | --- |
+| ExponentialSmoothing (endog[, trend, ...]) | Holt Winter's Exponential Smoothing |
+| SimpleExpSmoothing (endog[, ...]) | 简单指数平滑 |
+| Holt (endog[, exponential, damped_trend, ...]) | Holt's Exponential Smoothing |
+| HoltWintersResults (model, params, sse, aic, ...) | 拟合指数平滑模型的结果 |
+
+另外，基于“创新”状态空间方法，也实现了线性和非线性指数平滑模型。除了通常支持的参数拟合、样本内预测和样本外预测外，这些模型还支持预测区间、模拟等。
+
+| 函数及参数 | 说明 |
+| --- | --- |
+| exponential_smoothing.ets.ETSModel (endog[, ...]) | ETS 模型 |
+| exponential_smoothing.ets.ETSResults (model, ...) | 误差、趋势、季节性 (ETS) 指数平滑模型的结果 |
+最后，线性指数平滑模型也被作为一般状态空间框架的特殊情况单独实现（这与上面描述的“创新”状态空间方法不同）。虽然这种方法不允许非线性（乘法）
 
