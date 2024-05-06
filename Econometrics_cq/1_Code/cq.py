@@ -207,7 +207,7 @@ def estimate_p(data, col, lags):
         endog = data[col]
         exog_var =[]
         for i in range(1,lag+1):
-            data[f'{col}_l{i}']=data['dlny'].shift(i)
+            data[f'{col}_l{i}']=data[col].shift(i)
             exog_var.append(f'{col}_l{i}')     
         exog = sm.add_constant(data[exog_var])  
         res=sm.OLS(endog=endog, exog=exog, missing='drop').fit(cov_type='HC1')
