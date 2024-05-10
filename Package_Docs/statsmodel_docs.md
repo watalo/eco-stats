@@ -857,3 +857,30 @@ AR-X 和相关模型也可以使用 arima.ARIMA 类和 SARIMAX 类拟合（通�
 | exponential_smoothing.ets.ETSResults (model, ...) | 误差、趋势、季节性 (ETS) 指数平滑模型的结果 |
 最后，线性指数平滑模型也被作为一般状态空间框架的特殊情况单独实现（这与上面描述的“创新”状态空间方法不同）。虽然这种方法不允许非线性（乘法）
 
+# 向量自回归 (Vector Autoregressions, tsa.vector_ar)
+`statsmodels.tsa.vector_ar` 模块包含了用于同时对多个时间序列进行建模和分析的方法，这些方法使用了向量自回归（VAR）和向量误差修正模型（VECM）。
+## VAR(p) 过程
+我们对建模一个多元时间序列感兴趣，这里 \( T \) 表示观测次数，\( K \) 表示变量数。估计时间序列及其滞后值之间关系的一种方法是使用向量自回归过程：
+$$Y_t = \nu + A_1 Y_{t-1} + \ldots + A_p Y_{t-p} + u_t$$
+- $u_t \sim \text{Normal}(0, \Sigma_u)$
+- 其中 $A_i$ 是一个系数矩阵。
+
+我们主要遵循 Lutkepohl (2005) 的方法和符号，这里不会展开。
+## 模型拟合
+以下是可以通过 `statsmodels.tsa.api` 模块访问的类。
+
+要估计一个 VAR 模型，首先必须使用一个同质或结构化的 ndarray 创建模型。当使用一个结构化或记录数组时，类将使用传递的变量名称。否则，它们可以明确传递：
+
+$$T \times K \quad Y \quad T \quad K $$
+$Y_t = \nu + A_1 Y_{t-1} + \ldots + A_p Y_{t-p} + u_t$
+$[ u_t \sim \text{Normal}(0, \Sigma_u)$
+$A_i \quad K \times K$
+
+### 示例数据
+```python
+In [1]: import numpy as np
+In [2]: import pandas
+In [3]: import statsmodels.api as sm
+In [4]: from statsmodels.tsa.api import VAR
+In [5]: mdata = sm.datasets.macrodata.load_pandas().data
+# 准备日期索引
